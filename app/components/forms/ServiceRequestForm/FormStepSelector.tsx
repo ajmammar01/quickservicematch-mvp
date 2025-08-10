@@ -2,14 +2,13 @@
 
 import { Fragment } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
-import { CityServiceCombo } from './types';
-import { FormState } from './ServiceRequestForm';
+import { CityServiceCombo, FormState } from './types';
 
 type FormStepSelectorProps = {
   currentStep: number;
   combos: CityServiceCombo[];
   formState: FormState;
-  setFormState: (state: FormState) => void;
+  setFormState: React.Dispatch<React.SetStateAction<FormState>>;
   setCurrentStep: (step: number) => void;
 };
 

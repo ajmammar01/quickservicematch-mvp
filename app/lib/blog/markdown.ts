@@ -54,7 +54,7 @@ export function getAllPosts(): BlogPost[] {
 /**
  * Get a specific blog post by slug
  */
-export function getPostBySlug(slug: string): BlogPost | null {
+export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   try {
     // Construct file path
     const fullPath = path.join(contentDirectory, `${slug}.md`);
@@ -69,7 +69,7 @@ export function getPostBySlug(slug: string): BlogPost | null {
     const { data, content } = matter(fileContents);
     
     // Convert markdown to HTML
-    const html = marked(content);
+    const html = await marked(content);
     
     // Return the post data with HTML
     return {

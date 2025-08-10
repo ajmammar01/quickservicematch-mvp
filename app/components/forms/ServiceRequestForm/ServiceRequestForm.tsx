@@ -6,22 +6,7 @@ import FormStepSelector from './FormStepSelector';
 import FormStepDetails from './FormStepDetails';
 import FormStepSubmit from './FormStepSubmit';
 import SuccessMessage from './SuccessMessage';
-import { Location } from './types';
-
-interface FormState {
-  name: string;
-  phoneNumber: string;
-  address: string;
-  description?: string;
-  selectedCity: string;
-  selectedService: string;
-  location?: Location;
-}
-
-interface CityServiceCombo {
-  city: string;
-  service: string;
-}
+import { Location, FormState, CityServiceCombo } from './types';
 
 export default function ServiceRequestForm() {
   const [isLoading, setIsLoading] = useState(false);

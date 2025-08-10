@@ -33,7 +33,7 @@ export default function ThemeToggle() {
             animate="animate"
             exit="exit"
             variants={variants}
-            transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+            transition={{ type: 'spring' as const, stiffness: 300, damping: 15 }}
           >
             <SunIcon className="h-5 w-5" aria-hidden="true" />
           </MotionDiv>
@@ -44,7 +44,7 @@ export default function ThemeToggle() {
             animate="animate"
             exit="exit"
             variants={variants}
-            transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+            transition={{ type: 'spring' as const, stiffness: 300, damping: 15 }}
           >
             <MoonIcon className="h-5 w-5" aria-hidden="true" />
           </MotionDiv>

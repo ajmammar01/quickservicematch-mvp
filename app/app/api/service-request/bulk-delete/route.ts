@@ -1,17 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+// 🚧 Hidden for MVP - Authentication
+// import { getServerSession } from 'next-auth/next';
+// import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import prisma from '@/lib/db';
 
 // POST handler for bulk deletion of service requests
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const session = await getServerSession(authOptions);
+    // 🚧 Hidden for MVP - Authentication
+    // const session = await getServerSession(authOptions);
+    // if (!session || (session.user as any)?.role !== 'admin') {
+    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // }
     
-    if (!session || (session.user as any)?.role !== 'admin') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // TODO: Re-enable authentication when not in MVP mode
+    return NextResponse.json({ error: 'Endpoint disabled in MVP' }, { status: 403 });
     
     const { ids } = await request.json();
     

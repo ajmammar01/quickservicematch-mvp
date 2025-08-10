@@ -1,43 +1,29 @@
+// 🚧 Hidden for MVP - Advanced provider matching
+// This file contains provider matching logic that requires additional
+// database models and relations not in the current MVP schema.
+
 import { prisma } from '@/lib/db';
 import { Provider } from '@prisma/client';
 
 /**
- * Find the best provider for a given service in a specific city
+ * MVP: Simplified provider matching by city and service name
  * 
- * This function searches for providers that:
- * 1. Are located in the specified city
- * 2. Offer the requested service type
- * 
- * Providers are ranked by:
- * 1. Highest average review rating (avgRating)
- * 2. Most reviews (totalReviews)
- * 
- * @param serviceTypeId - The ID of the requested service type
- * @param cityId - The ID of the city where service is needed
+ * @param service - The service name (string)
+ * @param city - The city name (string)
  * @returns The best matched provider or null if no matches found
  */
-export async function findBestProvider(serviceTypeId: string, cityId: string): Promise<Provider | null> {
-  // Search for providers in the specified city that offer the requested service
+export async function findBestProvider(service: string, city: string): Promise<Provider | null> {
+  // MVP: Simple matching by city and service name
   const provider = await prisma.provider.findFirst({
     where: {
-      // Must be in the requested city
-      cityId,
-      // Must offer the requested service
-      serviceTypes: {
-        some: {
-          serviceTypeId,
-        },
-      },
+      city: city,
+      service: service,
     },
-    // Order by rating and number of reviews (descending)
-    orderBy: [
-      { avgRating: 'desc' },
-      { totalReviews: 'desc' },
-    ],
-    // Only take the top result
-    take: 1,
+    // Order by creation date (newest first)
+    orderBy: {
+      createdAt: 'desc',
+    },
   });
 
-  // Return the provider or null if none found
   return provider;
 }

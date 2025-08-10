@@ -16,6 +16,11 @@ export type Location = {
   lng?: number;
 };
 
+export type CityServiceCombo = {
+  city: string;
+  service: string;
+};
+
 export type FormState = {
   name: string;
   phoneNumber: string;

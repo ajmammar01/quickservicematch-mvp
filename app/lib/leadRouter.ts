@@ -1,142 +1,100 @@
-import prisma from '@/lib/db';
-import { ServiceRequest, Provider, ProviderPlan, Prisma } from '@prisma/client';
+// 🚧 Hidden for MVP - Advanced lead routing system
+// This file contains advanced provider matching logic that requires additional
+// database models (ProviderPlan, provider relations, etc.) not in the current MVP schema.
 
-// Type for the provider including relations needed for routing logic
-type ProviderWithDetails = Prisma.ProviderGetPayload<{
-  include: {
-    city: true;
-    serviceTypes: {
-      include: {
-        serviceType: true;
-      };
-    };
-  };
-}>;
+import prisma from '@/lib/db';
+import { ServiceRequest, Provider, Prisma } from '@prisma/client';
+
+// MVP: ProviderPlan enum not available in current schema
+enum ProviderPlan {
+  FREE = 'FREE',
+  PAY_PER_LEAD = 'PAY_PER_LEAD', 
+  SUBSCRIPTION = 'SUBSCRIPTION'
+}
+
+// MVP: Simplified provider type since relations don't exist in current schema
+type ProviderWithDetails = Provider & {
+  plan?: string;
+  businessName?: string;
+  avgRating?: number;
+  totalReviews?: number;
+  pricePerLead?: number;
+  subscriptionFee?: number;
+  apiEndpoint?: string;
+  phoneNumber?: string;
+  email?: string;
+};
 
 
 /**
- * Finds the best matching provider for a given service request based on city, service type, and ranking.
- * @param lead The service request details.
- * @returns The best matching provider with details, or null if none found.
+ * MVP: Simplified provider matching - finds provider by city and service
  */
 async function findBestProviderForLead(lead: ServiceRequest): Promise<ProviderWithDetails | null> {
-  const criteria = { cityId: lead.cityId, serviceTypeId: lead.serviceTypeId };
-  console.log(`Searching for provider for lead ${lead.id} with criteria:`, criteria);
-  console.log(`Searching for provider for lead ${lead.id} in city ${lead.cityId} for service ${lead.serviceTypeId}`);
+  console.log(`MVP: Searching for provider for lead ${lead.id} in city ${lead.city} for service ${lead.service}`);
+  
+  // MVP: Simple matching by city and service (string matching)
   const provider = await prisma.provider.findFirst({
     where: {
-      cityId: lead.cityId,
-      serviceTypes: {
-        some: {
-          serviceTypeId: lead.serviceTypeId,
-        },
-      },
-      // Consider adding other criteria like active status if applicable
-      // status: 'ACTIVE',
+      city: lead.city,
+      service: lead.service,
     },
-    orderBy: [
-      { avgRating: 'desc' }, // Prioritize higher rating
-      { totalReviews: 'desc' }, // Then more reviews
-      // Add more tie-breaking criteria if necessary (e.g., creation date)
-    ],
-    include: {
-      city: true, // Needed for logging/context potentially
-      serviceTypes: { // Needed for confirmation, though filtered in where
-        include: {
-          serviceType: true,
-        },
-      },
+    orderBy: {
+      createdAt: 'desc', // Latest provider first
     },
   });
 
   if (provider) {
-    console.log(`Found provider ${provider.id} (${provider.businessName}) for lead ${lead.id}. Details:`, { plan: provider.plan, phone: provider.phoneNumber, email: provider.email, api: provider.apiEndpoint });
+    console.log(`Found provider ${provider.id} (${provider.name}) for lead ${lead.id}`);
   } else {
     console.log(`No matching provider found for lead ${lead.id}`);
   }
-  return provider;
+  
+  return provider as ProviderWithDetails;
 }
 
 /**
- * Determines if a lead should be delivered based on the provider's plan and sets the initial paid status.
- * @param provider The provider assigned to the lead.
- * @returns An object containing `shouldDeliver` (boolean) and `paidStatus` (boolean).
+ * MVP: Simplified delivery status - always deliver for MVP
  */
 function determineLeadDeliveryStatus(provider: ProviderWithDetails): { shouldDeliver: boolean; paidStatus: boolean } {
-  console.log(`Determining delivery status for provider ${provider.id} with plan: ${provider.plan}`);
-  let shouldDeliver = true;
-  let paidStatus = false; // Default to unpaid for safety
-
-  switch (provider.plan) {
-    case ProviderPlan.PAY_PER_LEAD:
-      console.log(`Provider ${provider.businessName} is on PAY_PER_LEAD plan (€${provider.pricePerLead ?? 'N/A'} per lead)`);
-      // In a real system, this might involve checking provider's credit/balance.
-      // For now, we assume the lead should be delivered but marked as unpaid.
-      shouldDeliver = true;
-      paidStatus = false; // Requires payment processing later
-      break;
-    case ProviderPlan.SUBSCRIPTION:
-      console.log(`Provider ${provider.businessName} is on SUBSCRIPTION plan (€${provider.subscriptionFee ?? 'N/A'}/month)`);
-      shouldDeliver = true;
-      paidStatus = true; // Covered by subscription
-      break;
-    case ProviderPlan.FREE:
-    default: // Treat unknown plans as FREE for safety
-      console.log(`Provider ${provider.businessName} is on FREE plan (or unknown plan treated as FREE)`);
-      shouldDeliver = true;
-      paidStatus = true; // Free lead
-      break;
-  }
-  console.log(`Delivery status determined: shouldDeliver=${shouldDeliver}, paidStatus=${paidStatus}`);
-  return { shouldDeliver, paidStatus };
+  console.log(`MVP: All leads delivered for provider ${provider.id} (${provider.name})`);
+  return { 
+    shouldDeliver: true, 
+    paidStatus: true // MVP: All leads are free
+  };
 }
 
 /**
- * Updates the service request record in the database with the assigned provider ID and paid status.
- * @param leadId The ID of the service request to update.
- * @param providerId The ID of the provider assigned.
- * @param paidStatus The calculated paid status of the lead.
+ * MVP: Updates service request with provider ID
  */
-async function updateLeadWithProvider(leadId: string, providerId: string, paidStatus: boolean): Promise<void> {
-  const updateData = { providerId, paid }; // Using shorthand 'paid' which was likely intended instead of 'paidStatus'
-  console.log(`Attempting to update lead ${leadId} with data:`, updateData);
-  console.log(`Updating lead ${leadId} with provider ${providerId} and paid status ${paidStatus}`);
+async function updateLeadWithProvider(leadId: string, providerId: number, paidStatus: boolean): Promise<void> {
+  console.log(`MVP: Updating lead ${leadId} with provider ${providerId}`);
   try {
     await prisma.serviceRequest.update({
       where: { id: leadId },
-      data: updateData, // Use the prepared data object
+      data: { 
+        providerId,
+        status: 'ASSIGNED'
+      },
     });
     console.log(`Lead ${leadId} successfully updated in database.`);
   } catch (error) {
-    console.error(`DATABASE ERROR: Failed to update lead ${leadId}. Data:`, updateData, 'Error:', error);
-    // Re-throw the error to be caught by the main routeLead handler
+    console.error(`DATABASE ERROR: Failed to update lead ${leadId}:`, error);
     throw error;
   }
 }
 
 
 /**
- * Sends notifications to the provider via configured channels (WhatsApp, Email, API).
- * @param provider The provider to notify.
- * @param lead The service request details.
+ * MVP: Simplified notification logging
  */
 async function notifyProvider(provider: ProviderWithDetails, lead: ServiceRequest): Promise<void> {
-  console.log(`Initiating notifications for lead ${lead.id} to provider ${provider.businessName} (Phone: ${provider.phoneNumber}, Email: ${provider.email}, API: ${provider.apiEndpoint})`);
-  console.log(`Initiating notifications for lead ${lead.id} to provider ${provider.businessName}`);
-  // In a real system, these might be async operations returning Promises.
-  // Consider Promise.allSettled for independent success/failure.
+  console.log(`MVP: Notifying provider ${provider.name} about lead ${lead.id}`);
   try {
     sendWhatsApp(provider, lead);
     sendEmail(provider, lead);
-    // Consider Promise.allSettled if individual notification failures shouldn't stop others
-    sendWhatsApp(provider, lead);
-    sendEmail(provider, lead);
-    sendToAPI(provider, lead);
-    console.log(`Notification attempts finished for lead ${lead.id} to provider ${provider.businessName}`);
+    console.log(`MVP: Notification attempts finished for lead ${lead.id}`);
   } catch (error) {
-      console.error(`NOTIFICATION ERROR: Error during notification process for lead ${lead.id} to provider ${provider.businessName}:`, error);
-      // Decide if this error should prevent the overall process from succeeding.
-      // For now, we log it but don't re-throw, allowing other steps to potentially complete.
+    console.error(`NOTIFICATION ERROR for lead ${lead.id}:`, error);
   }
 }
 
@@ -144,47 +102,32 @@ async function notifyProvider(provider: ProviderWithDetails, lead: ServiceReques
 // --- Existing Notification Stubs (Minor improvements) ---
 
 /**
- * Send lead notification via WhatsApp (Stub)
+ * MVP: WhatsApp notification stub
  */
-function sendWhatsApp(provider: Provider, lead: ServiceRequest): void {
-  // Basic check if phone number exists
-  if (provider.phoneNumber) {
-    console.log(`WhatsApp: Sending lead ${lead.id} to ${provider.businessName} at ${provider.phoneNumber}`);
-    // console.log(`WhatsApp message content: New service request from ${lead.name} for ${lead.address}`);
-    // Actual WhatsApp API integration would go here
+function sendWhatsApp(provider: ProviderWithDetails, lead: ServiceRequest): void {
+  if (provider.whatsapp) {
+    console.log(`WhatsApp: Sending lead ${lead.id} to ${provider.name} at ${provider.whatsapp}`);
   } else {
-    console.log(`WhatsApp: Skipped for provider ${provider.businessName} (no phone number).`);
+    console.log(`WhatsApp: Skipped for provider ${provider.name} (no WhatsApp number).`);
   }
 }
 
 /**
- * Send lead notification via Email (Stub)
+ * MVP: Email notification stub  
  */
-function sendEmail(provider: Provider, lead: ServiceRequest): void {
-  // Basic check if email exists
-  if (provider.email) {
-    console.log(`Email: Sending lead ${lead.id} to ${provider.businessName} at ${provider.email}`);
-    // console.log(`Email subject: New Service Request`);
-    // console.log(`Email content: Customer ${lead.name} is requesting service at ${lead.address}`);
-    // Actual Email sending logic (e.g., using nodemailer or an email service) would go here
+function sendEmail(provider: ProviderWithDetails, lead: ServiceRequest): void {
+  if (provider.contact) {
+    console.log(`Email: Sending lead ${lead.id} to ${provider.name} at ${provider.contact}`);
   } else {
-    console.log(`Email: Skipped for provider ${provider.businessName} (no email address).`);
+    console.log(`Email: Skipped for provider ${provider.name} (no email address).`);
   }
 }
 
 /**
- * Send lead to provider's API endpoint if available (Stub)
+ * MVP: API notification stub (not used in MVP)
  */
-function sendToAPI(provider: Provider, lead: ServiceRequest): void {
-  // Check if provider.apiEndpoint exists before attempting
-  if (provider.apiEndpoint) {
-      console.log(`API: Sending lead ${lead.id} to ${provider.businessName} API endpoint: ${provider.apiEndpoint}`);
-      // console.log(`API payload would include customer details, location, and service type`);
-      // Actual API call logic would go here (e.g., using fetch or axios)
-      // Remember to handle potential errors from the API call
-  } else {
-      console.log(`API: Skipped for provider ${provider.businessName} (no API endpoint configured).`);
-  }
+function sendToAPI(provider: ProviderWithDetails, lead: ServiceRequest): void {
+  console.log(`API: Skipped for provider ${provider.name} (MVP - no API endpoints).`);
 }
 
 
@@ -211,10 +154,8 @@ export async function routeLead(lead: ServiceRequest): Promise<void> {
     // 2. Determine delivery status and initial paid status based on provider's plan
     const { shouldDeliver, paidStatus } = determineLeadDeliveryStatus(provider);
 
-    // 3. Update the lead record with the assigned provider and paid status
-    // This is done regardless of delivery status to record the match attempt.
-    // This is done regardless of delivery status to record the match attempt.
-    await updateLeadWithProvider(lead.id, provider.id, paidStatus); // Use paidStatus here
+    // 3. Update the lead record with the assigned provider
+    await updateLeadWithProvider(lead.id, provider.id, paidStatus);
 
     // 4. If the lead should be delivered, notify the provider
     if (shouldDeliver) {
@@ -230,10 +171,12 @@ export async function routeLead(lead: ServiceRequest): Promise<void> {
 
   } catch (error) {
     console.error(`CRITICAL ROUTING ERROR for lead ${lead.id}:`, error instanceof Error ? `${error.name}: ${error.message}` : error);
-    // Optional: Update lead status to 'ROUTING_FAILED' or similar
+    // MVP: Update lead status to cancelled on error
     try {
-      // Attempt to update status, but log failure clearly if it happens
-      await prisma.serviceRequest.update({ where: { id: lead.id }, data: { status: 'ROUTING_FAILED' /*, providerId: null */ } });
+      await prisma.serviceRequest.update({ 
+        where: { id: lead.id }, 
+        data: { status: 'CANCELLED' } 
+      });
     } catch (updateError) {
       console.error(`Failed to update lead ${lead.id} status after routing error:`, updateError);
     }

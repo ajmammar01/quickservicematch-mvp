@@ -1,5 +1,6 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+// 🚧 Hidden for MVP - Authentication
+// import { getServerSession } from "next-auth/next";
+// import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 // Types for TypeScript support
 export interface SessionUser {
@@ -15,22 +16,26 @@ export interface Session {
   expires: string;
 }
 
+// 🚧 Hidden for MVP - Authentication functions
 // Get the current session on the server
 export async function auth() {
-  const session = await getServerSession(authOptions);
-  return session;
+  // const session = await getServerSession(authOptions);
+  // return session;
+  return null; // MVP: No authentication
 }
 
 // Check if the current user is authenticated
 export async function isAuthenticated() {
-  const session = await auth();
-  return !!session?.user;
+  // const session = await auth();
+  // return !!session?.user;
+  return false; // MVP: No authentication
 }
 
 // Check if the current user is an admin
 export async function isAdmin() {
-  const session = await auth();
-  return session?.user?.role === "admin";
+  // const session = await auth();
+  // return session?.user?.role === "admin";
+  return false; // MVP: No authentication
 }
 
 // Helper function to use in client components

@@ -15,12 +15,7 @@ export default function FooterClient() {
       <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-accent-400/10 dark:bg-accent-600/10 rounded-full blur-3xl"></div>
 
       <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8 relative z-10">
-        <StaggerContainer
-          className="md:flex md:justify-between"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-        >
+        <StaggerContainer className="md:flex md:justify-between">
           <StaggerItem className="mb-8 md:mb-0">
             <Link href="/" className="flex items-center">
               <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-accent-600 dark:from-primary-400 dark:to-accent-400">

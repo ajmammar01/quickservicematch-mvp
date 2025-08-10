@@ -47,15 +47,16 @@ export async function saveImage(file: File): Promise<string> {
     // Write the file to disk
     fs.writeFileSync(filePath, buffer);
     
-    // Store image metadata in the database
-    await prisma.image.create({
-      data: {
-        filename: file.name,
-        path: `${UPLOAD_DIR_URL}/${uniqueFilename}`,
-        mimeType: file.type,
-        size: file.size,
-      },
-    });
+    // 🚧 Hidden for MVP - Image metadata storage
+    // Store image metadata in the database (requires Image model in schema)
+    // await prisma.image.create({
+    //   data: {
+    //     filename: file.name,
+    //     path: `${UPLOAD_DIR_URL}/${uniqueFilename}`,
+    //     mimeType: file.type,
+    //     size: file.size,
+    //   },
+    // });
     
     // Return the public URL path to the image
     return `${UPLOAD_DIR_URL}/${uniqueFilename}`;
@@ -80,12 +81,13 @@ export async function deleteImage(imagePath: string): Promise<void> {
       // Delete the file
       fs.unlinkSync(filePath);
       
-      // Delete the image metadata from the database
-      await prisma.image.deleteMany({
-        where: {
-          path: imagePath,
-        },
-      });
+      // 🚧 Hidden for MVP - Image metadata deletion
+      // Delete the image metadata from the database (requires Image model in schema)
+      // await prisma.image.deleteMany({
+      //   where: {
+      //     path: imagePath,
+      //   },
+      // });
     }
   } catch (error) {
     console.error('Error deleting image:', error);
