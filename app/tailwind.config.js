@@ -11,7 +11,7 @@ module.exports = {
       colors: {
         'electric-blue': '#00f6ff',
         'neon-purple': '#a855f7',
-        'soft-gray': '#1f2937',
+        'deep-gray': '#111827',
       },
       animation: {
         'pulse-slow': 'pulse 3s ease-in-out infinite',

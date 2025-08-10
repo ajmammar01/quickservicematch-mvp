@@ -25,151 +25,286 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-black via-deep-gray to-gray-900 text-white overflow-hidden relative">
       {/* Animated background particles */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -inset-10 opacity-50">
-          <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 right-1/3 w-48 h-48 bg-blue-500/10 rounded-full blur-2xl animate-pulse delay-500"></div>
+        <div className="absolute inset-0 opacity-40">
+          <motion.div 
+            className="absolute top-1/4 left-1/4 w-80 h-80 bg-electric-blue/20 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.2, 0.4, 0.2]
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div 
+            className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-neon-purple/15 rounded-full blur-3xl"
+            animate={{
+              scale: [1.2, 1, 1.2],
+              opacity: [0.15, 0.3, 0.15]
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2
+            }}
+          />
+          <motion.div 
+            className="absolute top-1/2 right-1/3 w-64 h-64 bg-electric-blue/10 rounded-full blur-2xl"
+            animate={{
+              scale: [1, 1.3, 1],
+              x: [0, 20, 0],
+              y: [0, -20, 0]
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1
+            }}
+          />
         </div>
       </div>
 
+      {/* Neon edge glow containers */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-electric-blue/50 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-neon-purple/50 to-transparent"></div>
+        <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-electric-blue/30 to-transparent"></div>
+        <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-neon-purple/30 to-transparent"></div>
+      </div>
+
       {/* Header */}
-      <header className="relative z-10 p-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 drop-shadow-sm">
+      <header className="relative z-10 p-8">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-electric-blue to-neon-purple animate-neon-glow">
               QuickServiceMatch
             </h1>
-            <p className="text-sm text-gray-300 mt-1">Connect with the best local services</p>
-          </div>
+            <p className="text-gray-300 mt-2 text-sm tracking-wide">
+              Connect with the best local services
+            </p>
+          </motion.div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 px-6 py-12">
-        <div className="max-w-4xl mx-auto text-center">
+      <main className="relative z-10 px-8 py-16">
+        <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="mb-16"
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-center mb-20"
           >
-            <h2 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+            <h2 className="text-6xl md:text-8xl font-bold mb-8 leading-tight">
               Find Trusted
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-400 relative">
+              <motion.span 
+                className="block text-transparent bg-clip-text bg-gradient-to-r from-electric-blue via-neon-purple to-electric-blue relative mt-4"
+                animate={{
+                  backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+                style={{
+                  backgroundSize: '200% 100%'
+                }}
+              >
                 Local Services
-                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full opacity-60"></div>
-              </span>
-              <span className="block mt-4">Instantly</span>
+                <motion.div 
+                  className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 h-1 bg-gradient-to-r from-electric-blue to-neon-purple rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: '50%' }}
+                  transition={{ duration: 1, delay: 1 }}
+                />
+              </motion.span>
+              <span className="block mt-6 text-white">Instantly</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            <motion.p 
+              className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 1.2 }}
+            >
               Matching you with top-rated providers in your city
-            </p>
+            </motion.p>
           </motion.div>
 
           {/* Form Section */}
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="max-w-md mx-auto"
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="max-w-lg mx-auto"
           >
             <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-400 rounded-2xl blur opacity-25 animate-pulse"></div>
-              <form 
-                onSubmit={handleSubmit}
-                className="relative bg-gray-900/80 backdrop-blur-xl p-8 rounded-2xl border border-gray-700/50 shadow-2xl"
+              {/* Glassmorphism card with neon border glow */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-electric-blue via-neon-purple to-electric-blue rounded-3xl blur opacity-30 animate-pulse"></div>
+              <motion.div
+                className="relative backdrop-blur-xl bg-deep-gray/40 border border-electric-blue/30 rounded-3xl p-10 shadow-2xl"
+                whileHover={{
+                  boxShadow: '0 0 40px rgba(0, 246, 255, 0.3), 0 0 60px rgba(168, 85, 247, 0.2)'
+                }}
+                transition={{ duration: 0.3 }}
               >
-                <div className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-8">
                   {/* Name Input */}
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.8 }}
+                  >
                     <input
                       type="text"
                       name="name"
                       placeholder="Your name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:bg-gray-800/70 transition-all duration-300"
+                      className="w-full px-6 py-4 bg-black/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-electric-blue focus:ring-2 focus:ring-electric-blue/30 focus:bg-black/70 transition-all duration-300 backdrop-blur-sm"
                       required
                     />
-                  </div>
+                  </motion.div>
 
                   {/* Service Select */}
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.9 }}
+                  >
                     <select
                       name="service"
                       value={formData.service}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:bg-gray-800/70 transition-all duration-300"
+                      className="w-full px-6 py-4 bg-black/50 border border-gray-600/50 rounded-2xl text-white focus:outline-none focus:border-electric-blue focus:ring-2 focus:ring-electric-blue/30 focus:bg-black/70 transition-all duration-300 backdrop-blur-sm"
                       required
                     >
-                      <option value="" className="text-gray-400">Select a service</option>
-                      <option value="plumbing">Plumbing</option>
-                      <option value="electrical">Electrical</option>
-                      <option value="hvac">HVAC</option>
-                      <option value="cleaning">Cleaning</option>
-                      <option value="landscaping">Landscaping</option>
+                      <option value="" className="bg-deep-gray text-gray-400">Select a service</option>
+                      <option value="plumbing" className="bg-deep-gray">Plumbing</option>
+                      <option value="electrical" className="bg-deep-gray">Electrical</option>
+                      <option value="hvac" className="bg-deep-gray">HVAC</option>
+                      <option value="cleaning" className="bg-deep-gray">Cleaning</option>
+                      <option value="landscaping" className="bg-deep-gray">Landscaping</option>
                     </select>
-                  </div>
+                  </motion.div>
 
                   {/* City Select */}
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 1.0 }}
+                  >
                     <select
                       name="city"
                       value={formData.city}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:bg-gray-800/70 transition-all duration-300"
+                      className="w-full px-6 py-4 bg-black/50 border border-gray-600/50 rounded-2xl text-white focus:outline-none focus:border-electric-blue focus:ring-2 focus:ring-electric-blue/30 focus:bg-black/70 transition-all duration-300 backdrop-blur-sm"
                       required
                     >
-                      <option value="" className="text-gray-400">Select your city</option>
-                      <option value="new-york">New York, NY</option>
-                      <option value="los-angeles">Los Angeles, CA</option>
-                      <option value="chicago">Chicago, IL</option>
-                      <option value="houston">Houston, TX</option>
-                      <option value="phoenix">Phoenix, AZ</option>
+                      <option value="" className="bg-deep-gray text-gray-400">Select your city</option>
+                      <option value="new-york" className="bg-deep-gray">New York, NY</option>
+                      <option value="los-angeles" className="bg-deep-gray">Los Angeles, CA</option>
+                      <option value="chicago" className="bg-deep-gray">Chicago, IL</option>
+                      <option value="houston" className="bg-deep-gray">Houston, TX</option>
+                      <option value="phoenix" className="bg-deep-gray">Phoenix, AZ</option>
                     </select>
-                  </div>
+                  </motion.div>
 
                   {/* Contact Info */}
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 1.1 }}
+                  >
                     <input
                       type="email"
                       name="contact"
                       placeholder="Email or phone"
                       value={formData.contact}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:bg-gray-800/70 transition-all duration-300"
+                      className="w-full px-6 py-4 bg-black/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-electric-blue focus:ring-2 focus:ring-electric-blue/30 focus:bg-black/70 transition-all duration-300 backdrop-blur-sm"
                       required
                     />
-                  </div>
+                  </motion.div>
 
                   {/* Optional Description */}
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 1.2 }}
+                  >
                     <textarea
                       name="description"
                       placeholder="Describe your service needs (optional)"
                       value={formData.description}
                       onChange={handleInputChange}
-                      rows={3}
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:bg-gray-800/70 transition-all duration-300 resize-none"
+                      rows={4}
+                      className="w-full px-6 py-4 bg-black/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-electric-blue focus:ring-2 focus:ring-electric-blue/30 focus:bg-black/70 transition-all duration-300 backdrop-blur-sm resize-none"
                     />
-                  </div>
+                  </motion.div>
 
                   {/* Submit Button */}
-                  <motion.button
-                    type="submit"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full relative overflow-hidden bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-semibold py-4 px-8 rounded-xl shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 group"
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 1.3 }}
                   >
-                    <span className="relative z-10">Find Services</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </motion.button>
-                </div>
-              </form>
+                    <motion.button
+                      type="submit"
+                      className="w-full relative overflow-hidden bg-gradient-to-r from-electric-blue to-neon-purple text-white font-bold py-5 px-8 rounded-2xl shadow-lg transition-all duration-300 group"
+                      whileHover={{ 
+                        scale: 1.02,
+                        boxShadow: '0 0 30px rgba(0, 246, 255, 0.5), 0 0 40px rgba(168, 85, 247, 0.3)'
+                      }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <motion.span 
+                        className="relative z-10 text-lg"
+                        animate={{
+                          textShadow: [
+                            '0 0 5px rgba(255,255,255,0.5)',
+                            '0 0 10px rgba(255,255,255,0.8)',
+                            '0 0 5px rgba(255,255,255,0.5)'
+                          ]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        Find Services
+                      </motion.span>
+                      <motion.div 
+                        className="absolute inset-0 bg-gradient-to-r from-neon-purple to-electric-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        animate={{
+                          backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "linear"
+                        }}
+                        style={{
+                          backgroundSize: '200% 100%'
+                        }}
+                      />
+                    </motion.button>
+                  </motion.div>
+                </form>
+              </motion.div>
             </div>
           </motion.div>
         </div>
