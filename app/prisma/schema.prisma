@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Enums
+enum RequestStatus {
+  PENDING
+  ASSIGNED
+  COMPLETED
+  CANCELLED
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  CONVERTED
+  LOST
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  PROVIDER
+}
+
+// Models
+model City {
+  id      String @id @default(uuid())
+  name    String @unique
+  country String
+  slug    String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ServiceType {
+  id   String @id @default(uuid())
+  name String @unique
+  slug String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Provider {
+  id            Int      @id @default(autoincrement())
+  name          String
+  service       String
+  city          String
+  country       String
+  contact       String
+  website       String?
+  whatsapp      String?
+  contactMethod String?   // 👈 Added this line
+  createdAt     DateTime @default(now())
+}
+
+
+model ServiceRequest {
+  id          String   @id @default(uuid())
+  name        String
+  email       String?
+  phone       String?  // This should be phoneNumber based on dashboard
+  city        String
+  service     String   // This should be serviceType based on dashboard
+  description String?
+  status      RequestStatus @default(PENDING)
+  leadStatus  LeadStatus    @default(NEW)
+  providerId  Int?     
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Optional fields for matching
+  matchedAt   DateTime?
+  leadSentAt  DateTime?
+  
+  // Response data
+  providerResponse String? // accepted, declined, no_response
+  responseTime     Int?    // minutes
+  
+  // Completion data
+  completedAt  DateTime?
+  actualCost   Float?
+  serviceNotes String?
+  
+  // User feedback
+  rating       Int?     // 1-5 scale
+  feedback     String?
+  feedbackAt   DateTime?
+  
+  // Additional fields from dashboard
+  address      String?
+  leadSource   String?
+  submittedAt  DateTime @default(now())
+}
+
+model UserExperience {
+  id           String    @id @default(uuid())
+  name         String    @default("Anonymous")
+  serviceName  String
+  city         String
+  experience   String
+  rating       Int       // 1-5 scale
+  providerName String?
+  imagePath    String?
+  helpful      Int       @default(0)
+  createdAt    DateTime  @default(now())
+}
+
+model Suggestion {
+  id        String   @id @default(uuid())
+  city      String
+  service   String
+  votes     Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([city, service])
+  @@index([votes])
+}
